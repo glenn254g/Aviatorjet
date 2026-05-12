@@ -20,6 +20,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+const engine = new Engine(io, store);
+
 app.use('/api/auth',  require('./auth'));
 app.use('/api/user',  require('./user'));
 app.use('/api/admin', require('./admin'));
@@ -29,7 +31,6 @@ app.get('/api/state', (_, res) => res.json({ ok: true, data: engine.getState() }
 ['/game', '/crash', '/play'].forEach(r => app.get(r, (_, res) => res.sendFile(path.join(__dirname, 'public/game.html'))));
 app.get('/admin', (_, res) => res.sendFile(path.join(__dirname, 'public/admin.html')));
 
-const engine = new Engine(io, store);
 attachSocket(io, engine);
 
 connectDB().then(() => {
