@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Admin — Betfity</title>
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="adm-header">
+  <h1>🛡️ Admin Dashboard</h1>
+  <button class="back-btn" onclick="window.location.href='/game'">← Back</button>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card"><div class="stat-val" id="sUsers">—</div><div class="stat-lbl">Total Users</div></div>
+  <div class="stat-card"><div class="stat-val" id="sBets">—</div><div class="stat-lbl">Total Bets</div></div>
+  <div class="stat-card"><div class="stat-val" id="sDep">—</div><div class="stat-lbl">Deposits (KES)</div></div>
+  <div class="stat-card"><div class="stat-val" id="sWit">—</div><div class="stat-lbl">Withdrawals (KES)</div></div>
+</div>
+
+<div class="adm-tabs">
+  <div class="adm-tab on" onclick="switchTab('users')">Users</div>
+  <div class="adm-tab" onclick="switchTab('txns')">Transactions</div>
+</div>
+
+<div class="adm-content on" id="tabUsers">
+  <div id="userList"><div class="adm-loader"><div class="spin"></div></div></div>
+</div>
+
+<div class="adm-content" id="tabTxns">
+  <div id="txnList"><div class="adm-loader"><div class="spin"></div></div></div>
+</div>
+
+<script src="auth.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

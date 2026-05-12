@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Aviator — Betfity</title>
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="app-body">
+
+<!-- CASHOUT POPUP -->
+<div class="cash-popup" id="cashPop">
+  <div class="pop-left">
+    <div class="pop-title">You cashed out!</div>
+    <div class="pop-mult" id="popMult">1.00x</div>
+  </div>
+  <div class="pop-win" id="popWin">0.00 KES</div>
+  <button class="pop-x" onclick="document.getElementById('cashPop').classList.remove('on')">×</button>
+</div>
+
+<!-- TOP BAR -->
+<header class="top-bar">
+  <img src="logo.svg" class="logo" alt="Betfity">
+  <div class="top-right">
+    <div class="bal-chip bal-display" id="topBal" onclick="openDep()">0.00 KES</div>
+    <button class="dep-chip" onclick="openDep()">+ Deposit</button>
+    <button class="menu-btn" onclick="toggleMenu()">☰</button>
+  </div>
+</header>
+
+<!-- MENU DROPDOWN -->
+<div class="menu-drop" id="menuDrop">
+  <div class="menu-item" onclick="showView('prof');toggleMenu()">👤 Profile</div>
+  <div class="menu-item" onclick="showView('promo');toggleMenu()">🎁 Promotions</div>
+  <div class="menu-item" onclick="showView('ref');toggleMenu()">👥 Referral</div>
+  <div class="menu-divider"></div>
+  <div class="menu-item" style="color:#e0234e" onclick="logout()">🚪 Logout</div>
+</div>
+
+<!-- SCROLL AREA -->
+<div class="scroll-area">
+
+  <!-- GAME VIEW -->
+  <div id="gameView">
+
+    <!-- Game sub-header -->
+    <div class="game-sub">
+      <span class="avi-brand">Aviator</span>
+      <span class="game-bal bal-display">0.00 KES</span>
+    </div>
+
+    <!-- History bar -->
+    <div class="hist-bar" id="histBar">
+      <span class="hm p">—</span>
+      <button class="hist-btn" onclick="showHistOv()">🕐 History</button>
+    </div>
+
+    <!-- Canvas -->
+    <div class="canvas-wrap" id="canvasWrap" style="height:220px">
+      <canvas id="gc"></canvas>
+
+      <!-- Multiplier display -->
+      <div class="mult-overlay" id="multOv" style="display:none;flex-direction:column;align-items:center">
+        <div class="mult-val" id="multVal">1.00x</div>
+        <div class="mult-sub" id="multSub">FLYING</div>
+      </div>
+
+      <!-- Waiting overlay -->
+      <div class="wait-overlay on" id="waitOv">
+        <div class="wait-label">WAITING FOR NEXT ROUND</div>
+        <div class="wait-circle" id="cdNum">5</div>
+      </div>
+
+      <!-- Crashed overlay -->
+      <div class="crash-overlay" id="crashOv">
+        <div class="crash-tag">FLEW AWAY!</div>
+        <div class="crash-val" id="crashVal">1.00x</div>
+      </div>
+    </div>
+
+    <!-- BET PANELS -->
+    <div class="panels">
+
+      <!-- Panel 1 -->
+      <div class="panel" id="panel1">
+        <div class="panel-tabs">
+          <button class="ptab on" onclick="switchTab(1,'bet')">Bet</button>
+          <button class="ptab"    onclick="switchTab(1,'auto')">Auto</button>
+        </div>
+        <div class="panel-row">
+          <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+            <div class="amt-ctrl">
+              <button class="ac-btn" onclick="adjAmt(1,-10)">−</button>
+              <input type="number" class="amt-input" id="amt1" value="10.00" min="1" step="1">
+              <button class="ac-btn" onclick="adjAmt(1,10)">+</button>
+            </div>
+            <div class="quick-amts">
+              <button class="qa" onclick="setAmt(1,100)">100</button>
+              <button class="qa" onclick="setAmt(1,200)">200</button>
+              <button class="qa" onclick="setAmt(1,500)">500</button>
+              <button class="qa" onclick="setAmt(1,1000)">1000</button>
+            </div>
+            <div class="auto-set" id="as1">
+              <label>Auto cashout at:</label>
+              <input type="number" id="auto1" placeholder="e.g. 2.00" min="1.1" step="0.1">
+            </div>
+          </div>
+          <button class="act-btn bet-btn" id="ab1" onclick="handleAct(1)">BET</button>
+        </div>
+      </div>
+
+      <!-- Panel 2 -->
+      <div class="panel" id="panel2">
+        <div class="panel-hdr">
+          <button class="rm-panel" title="Remove panel" onclick="this.closest('.panel').style.display='none'">−</button>
+        </div>
+        <div class="panel-tabs">
+          <button class="ptab on" onclick="switchTab(2,'bet')">Bet</button>
+          <button class="ptab"    onclick="switchTab(2,'auto')">Auto</button>
+        </div>
+        <div class="panel-row">
+          <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+            <div class="amt-ctrl">
+              <button class="ac-btn" onclick="adjAmt(2,-10)">−</button>
+              <input type="number" class="amt-input" id="amt2" value="10.00" min="1" step="1">
+              <button class="ac-btn" onclick="adjAmt(2,10)">+</button>
+            </div>
+            <div class="quick-amts">
+              <button class="qa" onclick="setAmt(2,100)">100</button>
+              <button class="qa" onclick="setAmt(2,200)">200</button>
+              <button class="qa" onclick="setAmt(2,500)">500</button>
+              <button class="qa" onclick="setAmt(2,1000)">1000</button>
+            </div>
+            <div class="auto-set" id="as2">
+              <label>Auto cashout at:</label>
+              <input type="number" id="auto2" placeholder="e.g. 2.00" min="1.1" step="0.1">
+            </div>
+          </div>
+          <button class="act-btn bet-btn" id="ab2" onclick="handleAct(2)">BET</button>
+        </div>
+      </div>
+
+    </div><!-- /panels -->
+
+    <!-- PROMOTIONS VIEW (inline) -->
+    <div class="page-ov" id="promoView">
+      <div class="pov-title">🎁 Promotions</div>
+      <div class="promo-card">
+        <div class="promo-top" style="background:linear-gradient(135deg,#1a2e3a,#1565c0)">
+          <div style="font-size:32px">🎉</div>
+          <div style="font-size:16px;font-weight:700;margin-top:6px">Welcome Bonus</div>
+          <div style="font-size:12px;color:rgba(255,255,255,.6);margin-top:4px">100% match on first deposit</div>
+        </div>
+        <div class="promo-body">
+          <div class="promo-tag">Active</div>
+          <div class="promo-desc">Deposit any amount and receive a 100% bonus. Maximum KES 10,000. Wagering: 20x.</div>
+          <button class="sheet-submit" style="margin-top:10px" onclick="openDep()">Deposit Now</button>
+        </div>
+      </div>
+      <div class="promo-card">
+        <div class="promo-top" style="background:linear-gradient(135deg,#2e1a3a,#7b1fa2)">
+          <div style="font-size:32px">👑</div>
+          <div style="font-size:16px;font-weight:700;margin-top:6px">VIP Weekly Cashback</div>
+          <div style="font-size:12px;color:rgba(255,255,255,.6);margin-top:4px">Up to 15% every week</div>
+        </div>
+        <div class="promo-body">
+          <div class="promo-tag" style="color:#a29bfe;border-color:rgba(108,92,231,.4);background:rgba(108,92,231,.1)">VIP Only</div>
+          <div class="promo-desc">Earn weekly cashback on losses. More play = higher cashback percentage.</div>
+        </div>
+      </div>
+      <div class="promo-card">
+        <div class="promo-top" style="background:linear-gradient(135deg,#1a2e1a,#2e7d32)">
+          <div style="font-size:32px">🎮</div>
+          <div style="font-size:16px;font-weight:700;margin-top:6px">Daily Free Bets</div>
+          <div style="font-size:12px;color:rgba(255,255,255,.6);margin-top:4px">Login daily to claim</div>
+        </div>
+        <div class="promo-body">
+          <div class="promo-tag">Daily</div>
+          <div class="promo-desc">Log in every day and claim your free bet token. Available for all players.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REFERRAL VIEW -->
+    <div class="page-ov" id="refView">
+      <div class="pov-title">👥 Referral Program</div>
+      <div class="p-card" style="text-align:center">
+        <div style="font-size:13px;color:rgba(255,255,255,.5);margin-bottom:12px">Invite friends — earn KES 100 for each friend who deposits</div>
+        <div class="ref-box">
+          <div class="ref-lbl">Your Referral Code</div>
+          <div class="ref-code" id="refCode">——</div>
+          <button class="copy-btn" onclick="copyRef()">Copy Code</button>
+        </div>
+        <div style="margin-top:10px;font-size:12px;color:rgba(255,255,255,.4)">Link: <span id="refLink" style="color:#4CAF50">—</span></div>
+      </div>
+      <div class="p-card">
+        <div style="font-size:14px;font-weight:700;margin-bottom:10px">How It Works</div>
+        <div class="steps">
+          <div class="step"><div class="step-n">1</div><div class="step-txt">Share your code with friends</div></div>
+          <div class="step"><div class="step-n">2</div><div class="step-txt">Friend registers using your code</div></div>
+          <div class="step"><div class="step-n">3</div><div class="step-txt">Friend makes first deposit</div></div>
+          <div class="step"><div class="step-n" style="background:#f9ca24;color:#000">💰</div><div class="step-txt">You earn KES 100 instantly!</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROFILE VIEW -->
+    <div class="page-ov" id="profView">
+      <div class="pov-title">👤 My Profile</div>
+
+      <div class="p-card" style="display:flex;align-items:center;gap:12px">
+        <div class="p-avatar" id="profAvatar">U</div>
+        <div>
+          <div style="font-size:17px;font-weight:700" id="profName">—</div>
+          <div style="font-size:12px;color:rgba(255,255,255,.4);margin-top:2px" id="profMob">—</div>
+          <div style="margin-top:5px"><span style="background:rgba(76,175,80,.12);color:#4CAF50;font-size:11px;padding:2px 8px;border-radius:6px">Active</span></div>
+        </div>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+      </div>
+
+      <div class="bal-card">
+        <div class="bal-lbl">Main Balance</div>
+        <div class="bal-num bal-display" id="profBal">0.00</div>
+        <div class="bal-cur">KES</div>
+      </div>
+
+      <div class="act-grid">
+        <div class="act-card" onclick="openDep()"><div class="act-ic">💳</div><div class="act-nm">Deposit</div><div class="act-sub">Add funds</div></div>
+        <div class="act-card" onclick="openWdr()"><div class="act-ic">💸</div><div class="act-nm">Withdraw</div><div class="act-sub">Cash out</div></div>
+      </div>
+
+      <div id="adminLink" style="display:none;margin:0 12px 8px">
+        <a href="/admin" style="display:block;background:#e0234e;color:#fff;padding:12px;border-radius:10px;text-align:center;font-weight:700;text-decoration:none">🛡️ Admin Dashboard</a>
+      </div>
+
+      <div class="sect-lbl">Bonus Balance</div>
+      <div class="p-card" style="display:flex;justify-content:space-between;align-items:center">
+        <span style="color:rgba(255,255,255,.6)">Bonus</span>
+        <span style="color:#f9ca24;font-weight:700" id="profBonus">50.00 KES</span>
+      </div>
+
+      <div class="sect-lbl">Recent Transactions</div>
+      <div id="txnList"><div style="padding:16px;text-align:center"><div class="spin"></div></div></div>
+
+      <div class="sect-lbl">Bet History</div>
+      <div id="betList"><div style="padding:16px;text-align:center"><div class="spin"></div></div></div>
+
+    </div><!-- /profView -->
+
+  </div><!-- /gameView -->
+</div><!-- /scroll-area -->
+
+<!-- BOTTOM NAV -->
+<nav class="bot-nav">
+  <button class="nav-btn on" onclick="showView('game')"><span class="nav-icon">⭐</span><span>Game</span><div class="nav-dot"></div></button>
+  <button class="nav-btn"    onclick="showView('promo')"><span class="nav-icon">✦</span><span>Promos</span><div class="nav-dot"></div></button>
+  <button class="nav-btn"    onclick="showView('ref')">  <span class="nav-icon">👥</span><span>Referral</span><div class="nav-dot"></div></button>
+  <button class="nav-btn"    onclick="showView('prof')"> <span class="nav-icon">👁</span><span>Profile</span><div class="nav-dot"></div></button>
+</nav>
+
+<!-- HISTORY OVERLAY -->
+<div class="hist-ov" id="histOv">
+  <div class="hist-ov-hdr">
+    <h5>Round History</h5>
+    <button class="hist-close" onclick="closeHistOv()">×</button>
+  </div>
+  <div class="hist-grid" id="histGrid"></div>
+</div>
+
+<!-- DEPOSIT SHEET -->
+<div class="sheet-bg" id="depSheet">
+  <div class="sheet">
+    <h4>💳 Deposit Funds</h4>
+    <div class="quick-deps">
+      <div class="qd" onclick="setDepAmt(100)">100</div>
+      <div class="qd" onclick="setDepAmt(500)">500</div>
+      <div class="qd" onclick="setDepAmt(1000)">1000</div>
+      <div class="qd" onclick="setDepAmt(5000)">5000</div>
+    </div>
+    <input type="number" class="sheet-input" id="depAmt" placeholder="Enter amount (KES)" min="10">
+    <div class="sheet-msg" id="depMsg"></div>
+    <button class="sheet-submit" id="depBtn" onclick="submitDep()">Deposit</button>
+    <button class="sheet-cancel" onclick="closeDep()">Cancel</button>
+  </div>
+</div>
+
+<!-- WITHDRAW SHEET -->
+<div class="sheet-bg" id="wdrSheet">
+  <div class="sheet">
+    <h4>💸 Withdraw Funds</h4>
+    <div class="avail-row">
+      <span>Available Balance</span>
+      <span id="wdrAvail">0.00 KES</span>
+    </div>
+    <input type="number" class="sheet-input" id="wdrAmt" placeholder="Enter amount (KES)" min="10">
+    <div class="sheet-msg" id="wdrMsg"></div>
+    <button class="sheet-submit" id="wdrBtn" onclick="submitWdr()">Withdraw</button>
+    <button class="sheet-cancel" onclick="closeWdr()">Cancel</button>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="auth.js"></script>
+<script src="game.js"></script>
+</body>
+</html>

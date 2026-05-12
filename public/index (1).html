@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Betfity Aviator — Kenya's #1 Crash Game</title>
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="land-header">
+  <img src="logo.svg" class="land-logo" alt="Betfity">
+  <div class="land-btns">
+    <button class="btn-reg" onclick="openModal('reg')">Register</button>
+    <button class="btn-log" onclick="openModal('log')">Login</button>
+  </div>
+</header>
+
+<div class="hero">
+  <h1>Play <span>Aviator</span></h1>
+  <p>Watch the multiplier grow — cash out before it crashes!</p>
+  <div class="hero-ctas">
+    <button class="cta-play" onclick="openModal('reg')">Play Now →</button>
+    <button class="cta-login" onclick="openModal('log')">Login</button>
+  </div>
+  <div class="demo-wrap">
+    <div class="demo-hist">
+      <span class="demo-m" style="background:rgba(108,92,231,.2);color:#a29bfe">3.23x</span>
+      <span class="demo-m" style="background:rgba(9,132,227,.2);color:#74b9ff">1.11x</span>
+      <span class="demo-m" style="background:rgba(232,67,147,.2);color:#fd79a8">11.62x</span>
+      <span class="demo-m" style="background:rgba(9,132,227,.2);color:#74b9ff">1.69x</span>
+      <span class="demo-m" style="background:rgba(243,156,18,.2);color:#f9ca24">14.57x</span>
+    </div>
+    <div class="demo-area" id="demoMult">1.00x</div>
+    <div class="demo-panel">
+      <input type="text" class="demo-input" value="10.00" readonly>
+      <button class="demo-bet" onclick="openModal('reg')">BET</button>
+    </div>
+  </div>
+</div>
+
+<section class="features">
+  <div class="feat-title">Why Betfity?</div>
+  <div class="feat-grid">
+    <div class="feat-card"><div class="feat-icon">⚡</div><div class="feat-name">Instant Payouts</div><div class="feat-desc">Withdraw winnings fast</div></div>
+    <div class="feat-card"><div class="feat-icon">🔒</div><div class="feat-name">Secure</div><div class="feat-desc">SSL encrypted platform</div></div>
+    <div class="feat-card"><div class="feat-icon">🎁</div><div class="feat-name">1000 KES Bonus</div><div class="feat-desc">Free on signup</div></div>
+    <div class="feat-card"><div class="feat-icon">📱</div><div class="feat-name">Mobile Ready</div><div class="feat-desc">Play anywhere, anytime</div></div>
+  </div>
+</section>
+
+<footer class="land-footer">© 2025 Betfity &bull; Licensed BCLB #G653 &bull; 18+ Only &bull; Play Responsibly</footer>
+
+<!-- LOGIN MODAL -->
+<div class="modal-bg" id="logModal">
+  <div class="modal-box">
+    <h3>Login <button class="modal-close" onclick="closeModal('log')">×</button></h3>
+    <div class="modal-err" id="logErr"></div>
+    <div class="field"><label>Username or Phone</label><input type="text" id="logUser" placeholder="Enter username or phone" autocomplete="username"></div>
+    <div class="field"><label>Password</label><input type="password" id="logPass" placeholder="Enter password" autocomplete="current-password"></div>
+    <button class="modal-submit" id="logBtn" onclick="doLogin()">Login</button>
+    <div class="modal-foot">No account? <a onclick="switchModal('log','reg')">Register here</a></div>
+  </div>
+</div>
+
+<!-- REGISTER MODAL -->
+<div class="modal-bg" id="regModal">
+  <div class="modal-box">
+    <h3>Create Account <button class="modal-close" onclick="closeModal('reg')">×</button></h3>
+    <div class="modal-err" id="regErr"></div>
+    <div class="bonus-banner">🎁 Get KES 1,000 Welcome Bonus on signup!</div>
+    <div class="field"><label>Username</label><input type="text" id="regName" placeholder="Choose a username" autocomplete="username"></div>
+    <div class="field"><label>Mobile Number</label><input type="tel" id="regMob" placeholder="e.g. 0712345678" autocomplete="tel"></div>
+    <div class="field"><label>Password</label><input type="password" id="regPass" placeholder="Create password (min 6 chars)" autocomplete="new-password"></div>
+    <div class="field"><label>Referral Code (optional)</label><input type="text" id="regPromo" placeholder="Enter referral code"></div>
+    <div class="field" style="display:flex;align-items:center;gap:8px">
+      <input type="checkbox" id="terms" style="width:16px;height:16px;accent-color:#4CAF50;flex-shrink:0">
+      <label for="terms" style="font-size:12px;color:rgba(255,255,255,.5);cursor:pointer">I am 18+ and agree to Terms &amp; Conditions</label>
+    </div>
+    <button class="modal-submit" id="regBtn" onclick="doRegister()">Create Account &amp; Play</button>
+    <div class="modal-foot">Have an account? <a onclick="switchModal('reg','log')">Login here</a></div>
+  </div>
+</div>
+
+<script src="auth.js"></script>
+<script>
+if (isLoggedIn()) window.location.href = '/game';
+
+// Demo animation
+let dm = 1.00, dd = 1;
+setInterval(() => {
+  dm = parseFloat((dm + 0.04 * dd).toFixed(2));
+  if (dm >= 6) dd = -1;
+  if (dm <= 1) { dm = 1.00; dd = 1; }
+  const el = document.getElementById('demoMult');
+  if (el) el.textContent = dm.toFixed(2) + 'x';
+}, 130);
+
+// Prefill referral from URL
+const ref = new URLSearchParams(location.search).get('ref') || new URLSearchParams(location.search).get('refer');
+if (ref) { document.getElementById('regPromo').value = ref; openModal('reg'); }
+
+function openModal(t)  { document.getElementById(t + 'Modal').classList.add('open'); }
+function closeModal(t) { document.getElementById(t + 'Modal').classList.remove('open'); }
+function switchModal(a, b) { closeModal(a); openModal(b); }
+
+function showErr(t, m) { const e = document.getElementById(t + 'Err'); e.textContent = m; e.style.display = 'block'; }
+function hideErr(t)    { document.getElementById(t + 'Err').style.display = 'none'; }
+
+async function doLogin() {
+  const u = document.getElementById('logUser').value.trim();
+  const p = document.getElementById('logPass').value;
+  if (!u || !p) { showErr('log', 'Enter username and password'); return; }
+  const btn = document.getElementById('logBtn');
+  btn.disabled = true; btn.textContent = 'Logging in…';
+  hideErr('log');
+  try {
+    const r = await login(u, p);
+    if (r.ok) { window.location.href = '/game'; }
+    else { showErr('log', r.msg || 'Invalid credentials'); btn.disabled = false; btn.textContent = 'Login'; }
+  } catch { showErr('log', 'Connection error'); btn.disabled = false; btn.textContent = 'Login'; }
+}
+
+async function doRegister() {
+  const n = document.getElementById('regName').value.trim();
+  const m = document.getElementById('regMob').value.trim();
+  const p = document.getElementById('regPass').value;
+  const c = document.getElementById('regPromo').value.trim();
+  if (!n) { showErr('reg', 'Username is required'); return; }
+  if (!m) { showErr('reg', 'Mobile number is required'); return; }
+  if (p.length < 6) { showErr('reg', 'Password must be at least 6 characters'); return; }
+  if (!document.getElementById('terms').checked) { showErr('reg', 'Please accept the Terms & Conditions'); return; }
+  const btn = document.getElementById('regBtn');
+  btn.disabled = true; btn.textContent = 'Creating account…';
+  hideErr('reg');
+  try {
+    const r = await register(n, m, p, c);
+    if (r.ok) { window.location.href = '/game'; }
+    else { showErr('reg', r.msg || 'Registration failed'); btn.disabled = false; btn.textContent = 'Create Account & Play'; }
+  } catch { showErr('reg', 'Connection error'); btn.disabled = false; btn.textContent = 'Create Account & Play'; }
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    if (document.getElementById('logModal').classList.contains('open')) doLogin();
+    if (document.getElementById('regModal').classList.contains('open')) doRegister();
+  }
+});
+</script>
+</body>
+</html>
