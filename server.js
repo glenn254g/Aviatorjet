@@ -3,6 +3,7 @@ const http = require('http');
 const { Server } = require('socket.io');
 const path = require('path');
 const cors = require('cors');
+
 const { connectDB } = require('./app/db');
 const Engine = require('./app/engine');
 const attachSocket = require('./app/socket');
@@ -29,15 +30,15 @@ app.use(cors({ origin: '*' }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Static files
-app.use(express.static(path.join(__dirname, 'app/public')));
+// FIXED: use public folder directly
+app.use(express.static(path.join(__dirname, 'public')));
 
 // API routes
 app.use('/api/auth', require('./app/auth'));
 app.use('/api/user', require('./app/user'));
 app.use('/api/admin', require('./app/admin'));
 
-// Root route FIXED
+// Root route
 app.get('/', (req, res) => {
   res.send('Betfity Aviator Server Running Successfully');
 });
@@ -50,23 +51,22 @@ app.get('/api/state', (req, res) => {
   });
 });
 
+const engine = new Engine(io, store);
+
 // Game routes
 ['/game', '/crash', '/play'].forEach(route => {
   app.get(route, (req, res) => {
-    res.sendFile(path.join(__dirname, 'app/public/game.html'));
+    res.sendFile(path.join(__dirname, 'public/game.html'));
   });
 });
 
-// Admin panel route
+// Admin route
 app.get('/admin', (req, res) => {
-  res.sendFile(path.join(__dirname, 'app/public/admin.html'));
+  res.sendFile(path.join(__dirname, 'public/admin.html'));
 });
-
-const engine = new Engine(io, store);
 
 attachSocket(io, engine);
 
-// Start server after DB connection
 connectDB()
   .then(() => {
     server.listen(PORT, '0.0.0.0', () => {
