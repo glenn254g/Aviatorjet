@@ -25,8 +25,13 @@ const engine = new Engine(io, store);
 app.use('/api/auth',  require('./auth'));
 app.use('/api/user',  require('./user'));
 
-// FIXED LINE (THIS WAS THE BUG)
+// FIXED LINE
 app.use('/api/admin', require('./admin'));
+
+// ✅ ADDED ROOT ROUTE (THIS FIXES "Cannot GET /")
+app.get('/', (_, res) => {
+  res.redirect('/game');
+});
 
 app.get('/api/state', (_, res) => res.json({ ok: true, data: engine.getState() }));
 
